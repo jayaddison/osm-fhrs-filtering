@@ -37,3 +37,15 @@
 #    - areas: ??
 #      - maybe join by way ID -- or perhaps check for shared nodes in common?
 #      - suggestion: leave area-matching for a later date
+
+psql -c "WITH dataset_20260212 (osm_id, name, fhrs_id) AS (SELECT osm_id, name, tags->'fhrs:id' FROM planet_osm_20260212_point WHERE tags ? 'fhrs:id'),
+     dataset_20260227 (osm_id, name, fhrs_id) AS (SELECT osm_id, name, tags->'fhrs:id' FROM planet_osm_20260227_point WHERE tags ? 'fhrs:id')
+SELECT
+    new.osm_id,
+    new.name,
+    old.fhrs_id as superseded_fhrs_id
+FROM dataset_20260212 AS old
+JOIN dataset_20260227 AS new ON new.osm_id = old.osm_id
+WHERE old.fhrs_id <> new.fhrs_id
+ORDER BY
+    old.fhrs_id ASC;"
