@@ -35,7 +35,7 @@ To install PostgreSQL and `osm2pgsql` on a Debian-derived operating system,
 without including any optional dependencies, you can run:
 
 ```sh
-$ sudo apt install --no-install-suggests --no-install-recommends postgresql osm2pgsql osmium-tool
+$ sudo apt install --no-install-suggests --no-install-recommends postgresql osm2pgsql osmium-tool postgresql-18-postgis-3
 ```
 
 Data sources
