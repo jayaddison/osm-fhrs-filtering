@@ -22,6 +22,9 @@ You will need:
  - The `osm2pgsql` command-line utility, to load OpenStreetMap datasets into
    the PostgreSQL database.
 
+ - The `osmium` command-line utility, to filter the OpenStreetMap datasets
+   into smaller, more precise (and therefore faster to load) segments.
+
 Geofabrik [provides a `raw directory index`](https://download.geofabrik.de/europe/united-kingdom.html#)
 of OpenStreetMap extracts for the United Kingdom; at the time of writing,
 snapshots dating back to 2024-01-01 can be downloaded from there.
@@ -32,7 +35,7 @@ To install PostgreSQL and `osm2pgsql` on a Debian-derived operating system,
 without including any optional dependencies, you can run:
 
 ```sh
-$ sudo apt install --no-install-suggests --no-install-recommends postgresql osm2pgsql
+$ sudo apt install --no-install-suggests --no-install-recommends postgresql osm2pgsql osmium-tool
 ```
 
 Data sources
