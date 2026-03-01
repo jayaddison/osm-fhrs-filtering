@@ -15,3 +15,22 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# TODO
+#  - pre-filter PBF files into PBF files containing only required items?
+#    - all files: places with fhrs:id
+#    - all-except-first-file: disused places (mainly amenity:disused)
+#    - rationale: a smaller dataset may be significantly quicker to (re)load
+#                 and to develop with
+#
+#  - load each PBF file into postgresql
+#    - multiple databases, or a single database with temporal versioning?
+#
+#  - query across the multi-PBF datasets using SQL to extract likely-unused IDs
+#
+#    - nodes: simple OSM-id-to-OSM-id INNER JOIN
+#      - suggestion: inspect LEFT JOIN results at a later date (deleted places)
+#
+#    - areas: ??
+#      - maybe join by way ID -- or perhaps check for shared nodes in common?
+#      - suggestion: leave area-matching for a later date
