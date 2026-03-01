@@ -38,14 +38,30 @@
 #      - maybe join by way ID -- or perhaps check for shared nodes in common?
 #      - suggestion: leave area-matching for a later date
 
-psql -c "WITH dataset_20260212 (osm_id, name, fhrs_id) AS (SELECT osm_id, name, tags->'fhrs:id' FROM planet_osm_20260212_point WHERE tags ? 'fhrs:id'),
-     dataset_20260227 (osm_id, name, fhrs_id) AS (SELECT osm_id, name, tags->'fhrs:id' FROM planet_osm_20260227_point WHERE tags ? 'fhrs:id')
+psql -c "WITH dataset_20260212 (osm_id, revision, name, fhrs_id) AS (SELECT osm_id, tags->'osm_version', name, tags->'fhrs:id' FROM planet_osm_20260212_point WHERE tags ? 'fhrs:id'),
+     dataset_20260227 (osm_id, revision, name, fhrs_id) AS (SELECT osm_id, tags->'osm_version', name, tags->'fhrs:id' FROM planet_osm_20260227_point WHERE tags ? 'fhrs:id'),
+     datasets_combined (osm_id, revision, name, fhrs_id) AS (SELECT * from dataset_20260212 UNION ALL SELECT * from dataset_20260227),
+     fhrs_recency AS (
+         SELECT
+             osm_id,
+             fhrs_id,
+             LAST_VALUE(name) OVER (
+                 PARTITION BY osm_id
+                 ORDER BY revision::int ASC
+                 ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+             ) AS latest_name,
+             LAST_VALUE(fhrs_id) OVER (
+                 PARTITION BY osm_id
+                 ORDER BY revision::int ASC
+                 ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+             ) AS latest_fhrs_id
+         FROM datasets_combined
+     )
 SELECT
-    new.osm_id,
-    new.name,
-    old.fhrs_id as superseded_fhrs_id
-FROM dataset_20260212 AS old
-JOIN dataset_20260227 AS new ON new.osm_id = old.osm_id
-WHERE old.fhrs_id <> new.fhrs_id
+    osm_id,
+    latest_name AS name,
+    fhrs_id AS superseded_fhrs_id
+FROM fhrs_recency
+WHERE fhrs_id <> latest_fhrs_id
 ORDER BY
-    old.fhrs_id ASC;"
+    fhrs_id ASC;"
