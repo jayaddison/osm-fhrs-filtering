@@ -23,7 +23,7 @@ attributed to the [OpenStreetMap Foundation](https://osmfoundation.org).
 
 Many mappers in the United Kingdom use the [FHODOT](https://github.com/gregrs-uk/fhodot)
 web-based utility, that re-uses that data and attempts to match the businesses
-within it to locations in the OpenStreetMap dataset.
+within the FHRS Open Data to locations in the OpenStreetMap dataset.
 
 [Geofabrik GmbH](https://www.geofabrik.de) in Germany makes subsets
 ('extracts') of the OpenStreetMap global map ('planet') available -- some of
