@@ -27,7 +27,7 @@
 #
 #  - load each PBF file into postgresql
 #    - multiple databases, or a single database with temporal versioning?
-#               $ osm2pgsql --hstore --prefix planet_osm_20260212 --extra-attributes ~/Downloads/scotland-260212.fhrs.osm.pbf
+#               $ osm2pgsql --hstore --prefix planet_osm_20260212 --extra-attributes scotland-260212.fhrs.osm.pbf
 #
 #  - query across the multi-PBF datasets using SQL to extract likely-unused IDs
 #
