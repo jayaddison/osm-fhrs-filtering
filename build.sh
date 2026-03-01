@@ -19,8 +19,9 @@
 # TODO
 #  - pre-filter PBF files into PBF files containing only required items?
 #    - all files: places with fhrs:id
-#               $ osmium tags-filter -o scotland-260212.fhrs.osm.pbf scotland-260212.osm.pbf n/fhrs:id
+#               $ osmium tags-filter -o scotland-260212.fhrs.osm.pbf scotland-260212.osm.pbf 'n/fhrs:id'
 #    - all-except-first-file: disused places (mainly amenity:disused)
+#               $ osmium tags-filter -o scotland-260212.fhrs.osm.pbf scotland-260212.osm.pbf 'n/fhrs:id' 'n/*disused*'
 #    - rationale: a smaller dataset may be significantly quicker to (re)load
 #                 and to develop with
 #
