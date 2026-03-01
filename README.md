@@ -8,6 +8,33 @@ Kingdom.
 The code here is licensed under the GNU Affero GPL license, version three or
 greater.
 
+Quickstart
+----------
+
+You will need:
+
+ - At least two historic snapshots of OpenStreetMap data for the region you
+   are focusing on.
+
+ - An installation of the PostgreSQL database that you can use to store and
+   process the OpenStreetMap snapshots.
+
+ - The `osm2pgsql` command-line utility, to load OpenStreetMap datasets into
+   the PostgreSQL database.
+
+Geofabrik [provides a `raw directory index`](https://download.geofabrik.de/europe/united-kingdom.html#)
+of OpenStreetMap extracts for the United Kingdom; at the time of writing,
+snapshots dating back to 2024-01-01 can be downloaded from there.
+
+For development/testing purposes you may want to select a smaller subregion.
+
+To install PostgreSQL and `osm2pgsql` on a Debian-derived operating system,
+without including any optional dependencies, you can run:
+
+```sh
+$ sudo apt install --no-install-suggests --no-install-recommends postgresql osm2pgsql
+```
+
 Data sources
 ------------
 
