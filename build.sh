@@ -63,7 +63,21 @@ datasets_combined (osm_id, revision, name, fhrs_id, disused) AS (SELECT * from d
 SELECT
     osm_id,
     name,
-    fhrs_id AS superseded_fhrs_id
+    fhrs_id AS superseded_fhrs_id,
+    EXISTS (
+        SELECT *
+        FROM datasets_combined AS updated
+        WHERE updated.osm_id = places.osm_id
+        AND updated.revision > places.revision
+        AND updated.fhrs_id <> places.fhrs_id
+    ) AS rerated,
+    EXISTS (
+        SELECT *
+        FROM datasets_combined AS updated
+        WHERE updated.osm_id = places.osm_id
+        AND updated.revision > places.revision
+        AND updated.disused
+    ) AS disused
 FROM datasets_combined AS places
 WHERE EXISTS (
     SELECT *
