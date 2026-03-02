@@ -38,9 +38,28 @@
 #      - maybe join by way ID -- or perhaps check for shared nodes in common?
 #      - suggestion: leave area-matching for a later date
 
-psql -c "WITH dataset_20260212 (osm_id, revision, name, fhrs_id) AS (SELECT osm_id, tags->'osm_version', name, tags->'fhrs:id' FROM planet_osm_20260212_point WHERE tags ? 'fhrs:id'),
-     dataset_20260227 (osm_id, revision, name, fhrs_id) AS (SELECT osm_id, tags->'osm_version', name, tags->'fhrs:id' FROM planet_osm_20260227_point WHERE tags ? 'fhrs:id'),
-     datasets_combined (osm_id, revision, name, fhrs_id) AS (SELECT * from dataset_20260212 UNION ALL SELECT * from dataset_20260227)
+psql -c "WITH dataset_20260212 (osm_id, revision, name, fhrs_id, disused) AS (
+    SELECT
+        osm_id,
+        tags->'osm_version',
+        name,
+        tags->'fhrs:id',
+        false
+     FROM planet_osm_20260212_point
+     WHERE tags ? 'fhrs:id'
+),
+dataset_20260227 (osm_id, revision, name, fhrs_id, disused) AS (
+    SELECT
+        osm_id,
+        tags->'osm_version',
+        name,
+        tags->'fhrs:id',
+        EXISTS (SELECT * FROM unnest(akeys(tags)) AS x(key) WHERE key ILIKE '%disused%')
+    FROM planet_osm_20260227_point
+    WHERE tags ? 'fhrs:id'
+    OR EXISTS (SELECT * FROM unnest(akeys(tags)) AS x(key) WHERE key ILIKE '%disused%')
+),
+datasets_combined (osm_id, revision, name, fhrs_id, disused) AS (SELECT * from dataset_20260212 UNION ALL SELECT * from dataset_20260227)
 SELECT
     osm_id,
     name,
@@ -51,7 +70,7 @@ WHERE EXISTS (
     FROM datasets_combined AS updated
     WHERE updated.osm_id = places.osm_id
     AND updated.revision > places.revision
-    AND updated.fhrs_id <> places.fhrs_id
+    AND (updated.fhrs_id <> places.fhrs_id OR disused)
 )
 ORDER BY
     fhrs_id ASC;"
