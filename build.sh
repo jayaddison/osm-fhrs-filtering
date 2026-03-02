@@ -70,7 +70,7 @@ SELECT
         WHERE updated.osm_id = places.osm_id
         AND updated.revision > places.revision
         AND updated.fhrs_id <> places.fhrs_id
-    ) AS rerated,
+    ) AS updated,
     EXISTS (
         SELECT *
         FROM datasets_combined AS updated
