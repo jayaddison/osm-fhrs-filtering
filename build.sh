@@ -46,7 +46,7 @@ psql -c "WITH dataset_20260212 (osm_id, revision, name, fhrs_id, disused) AS (
         tags->'fhrs:id',
         false
      FROM planet_osm_20260212_point
-     WHERE tags ? 'fhrs:id' AND tags->'addr:city' = 'Edinburgh'
+     WHERE tags ? 'fhrs:id'
 ),
 dataset_20260227 (osm_id, revision, name, fhrs_id, disused) AS (
     SELECT
@@ -56,8 +56,8 @@ dataset_20260227 (osm_id, revision, name, fhrs_id, disused) AS (
         tags->'fhrs:id',
         EXISTS (SELECT * FROM unnest(akeys(tags)) AS x(key) WHERE key ILIKE '%disused%')
     FROM planet_osm_20260227_point
-    WHERE tags->'addr:city' = 'Edinburgh' AND (tags ? 'fhrs:id'
-    OR EXISTS (SELECT * FROM unnest(akeys(tags)) AS x(key) WHERE key ILIKE '%disused%'))
+    WHERE tags ? 'fhrs:id'
+    OR EXISTS (SELECT * FROM unnest(akeys(tags)) AS x(key) WHERE key ILIKE '%disused%')
 ),
 datasets_combined (osm_id, revision, name, fhrs_id, disused) AS (SELECT * from dataset_20260212 UNION ALL SELECT * from dataset_20260227)
 SELECT
@@ -70,7 +70,7 @@ SELECT
         WHERE updated.osm_id = places.osm_id
         AND updated.revision > places.revision
         AND updated.fhrs_id <> places.fhrs_id
-    ) AS updated,
+    ) AS rerated,
     EXISTS (
         SELECT *
         FROM datasets_combined AS updated
