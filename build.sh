@@ -40,29 +40,18 @@
 
 psql -c "WITH dataset_20260212 (osm_id, revision, name, fhrs_id) AS (SELECT osm_id, tags->'osm_version', name, tags->'fhrs:id' FROM planet_osm_20260212_point WHERE tags ? 'fhrs:id'),
      dataset_20260227 (osm_id, revision, name, fhrs_id) AS (SELECT osm_id, tags->'osm_version', name, tags->'fhrs:id' FROM planet_osm_20260227_point WHERE tags ? 'fhrs:id'),
-     datasets_combined (osm_id, revision, name, fhrs_id) AS (SELECT * from dataset_20260212 UNION ALL SELECT * from dataset_20260227),
-     fhrs_recency AS (
-         SELECT
-             osm_id,
-             name,
-             fhrs_id,
-             LAST_VALUE(name) OVER (
-                 PARTITION BY osm_id
-                 ORDER BY revision::int ASC
-                 ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
-             ) AS latest_name,
-             LAST_VALUE(fhrs_id) OVER (
-                 PARTITION BY osm_id
-                 ORDER BY revision::int ASC
-                 ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
-             ) AS latest_fhrs_id
-         FROM datasets_combined
-     )
+     datasets_combined (osm_id, revision, name, fhrs_id) AS (SELECT * from dataset_20260212 UNION ALL SELECT * from dataset_20260227)
 SELECT
     osm_id,
     name,
     fhrs_id AS superseded_fhrs_id
-FROM fhrs_recency
-WHERE fhrs_id <> latest_fhrs_id
+FROM datasets_combined AS places
+WHERE EXISTS (
+    SELECT *
+    FROM datasets_combined AS rerated
+    WHERE rerated.osm_id = places.osm_id
+    AND rerated.revision > places.revision
+    AND rerated.fhrs_id <> places.fhrs_id
+)
 ORDER BY
     fhrs_id ASC;"
