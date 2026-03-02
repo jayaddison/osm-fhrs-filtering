@@ -44,6 +44,7 @@ psql -c "WITH dataset_20260212 (osm_id, revision, name, fhrs_id) AS (SELECT osm_
      fhrs_recency AS (
          SELECT
              osm_id,
+             name,
              fhrs_id,
              LAST_VALUE(name) OVER (
                  PARTITION BY osm_id
@@ -59,7 +60,7 @@ psql -c "WITH dataset_20260212 (osm_id, revision, name, fhrs_id) AS (SELECT osm_
      )
 SELECT
     osm_id,
-    latest_name AS name,
+    name,
     fhrs_id AS superseded_fhrs_id
 FROM fhrs_recency
 WHERE fhrs_id <> latest_fhrs_id
