@@ -48,10 +48,10 @@ SELECT
 FROM datasets_combined AS places
 WHERE EXISTS (
     SELECT *
-    FROM datasets_combined AS rerated
-    WHERE rerated.osm_id = places.osm_id
-    AND rerated.revision > places.revision
-    AND rerated.fhrs_id <> places.fhrs_id
+    FROM datasets_combined AS updated
+    WHERE updated.osm_id = places.osm_id
+    AND updated.revision > places.revision
+    AND updated.fhrs_id <> places.fhrs_id
 )
 ORDER BY
     fhrs_id ASC;"
